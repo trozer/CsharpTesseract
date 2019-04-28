@@ -13,10 +13,15 @@ namespace CsharpTesseract4
     {
         static void Main(string[] args)
         {
-            var program = new Program();
-            var native = InteropRuntimeImplementer.CreateInstance<ITessApiSignatures>();
-            var handle = new HandleRef(program, native.BaseApiCreate());
-            native.BaseApiInit(handle, "F:\\Work\\Tesseract\\CsharpTesseract\\CsharpTesseract4", "hu");
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            TesseractEngine engine = new TesseractEngine("F:\\Work\\Tesseract\\CsharpTesseract\\CsharpTesseract4\\CsharpTesseract4\\CsharpTesseract4\\bin\\x64\\Debug\\tessdata", "hun",
+                EngineMode.LSTMOnly, new string[0], new Dictionary<string, object>(), false);
+            var testImagePath = "F:\\Work\\Tesseract\\CsharpTesseract\\_leves.bmp";
+            var img = Pix.LoadFromFile(testImagePath);
+            var page = engine.Process(img);
+
+            var text = page.GetText();
+            Console.WriteLine(text);
             Console.ReadLine();
         }
     }
