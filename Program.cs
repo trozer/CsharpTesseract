@@ -15,30 +15,37 @@ namespace CsharpTesseract4
     {
         static void Main(string[] args)
         {
-            TesseractEngine engine = new TesseractEngine("F:\\Work\\Tesseract\\CsharpTesseract\\CsharpTesseract4\\CsharpTesseract4\\CsharpTesseract4\\bin\\x64\\Debug\\tessdata", "hun",
-                EngineMode.LSTMOnly, new string[0], new Dictionary<string, object>(), false);
+            using (var engine = new TesseractEngine("F:\\Work\\Tesseract\\CsharpTesseract\\CsharpTesseract4\\CsharpTesseract4\\CsharpTesseract4\\bin\\x64\\Debug\\tessdata", "hun",
+                EngineMode.LSTMOnly, new string[0], new Dictionary<string, object>(), false))
+            {
 
-            Bitmap kutya = new Bitmap(@"F:\\Work\\Tesseract\\CsharpTesseract\\_leves.bmp");
-            //var testImagePath = "F:\\Work\\Tesseract\\CsharpTesseract\\_leves.bmp";
-            //var img = Pix.LoadFromFile(testImagePath);
-            var watch = System.Diagnostics.Stopwatch.StartNew();
+                var watch = System.Diagnostics.Stopwatch.StartNew();
+                for (int i = 0; i < 100; i++)
+                {
+                    Bitmap kutya = new Bitmap(@"F:\\Work\\Tesseract\\CsharpTesseract\\_leves.bmp");
+                    InvokeTesseractOnBitmap(kutya, engine);
+                    kutya.Dispose();
+                }
 
-            BitmapToPixConverter converter = new BitmapToPixConverter();
-            var img = converter.Convert(kutya);
+                watch.Stop();
+                Console.WriteLine(watch.ElapsedMilliseconds);
 
-            
-            var page = engine.Process(img);
+            }
 
-            var text = page.GetText();
-            Console.WriteLine(text);
-            watch.Stop();
-            var elapsedMs = watch.ElapsedMilliseconds;
-
-            
-            
-
-            Console.WriteLine(elapsedMs);
             Console.ReadLine();
+        }
+
+        private static void InvokeTesseractOnBitmap(Bitmap bitmap, TesseractEngine engine)
+        {
+            BitmapToPixConverter converter = new BitmapToPixConverter();
+            using (var img = converter.Convert(bitmap))
+            {
+                using (var page = engine.Process(img))
+                {
+                    var text = page.GetText();
+                    Console.WriteLine(text);
+                }
+            }
         }
     }
 }
